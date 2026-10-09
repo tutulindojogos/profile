@@ -240,13 +240,13 @@ document.querySelectorAll('.fx').forEach(el => {
   const mk = init => ({x: Math.random() * w, y: init ? Math.random() * h : -20 * d, r: (Math.random() * 7 + 5) * d, a: Math.random() * 6.3,
     va: (Math.random() - .5) * .03, vy: (Math.random() * .5 + .35) * d, sw: Math.random() * 6.3, o: Math.random() * .4 + .35});
   function size() {
-    d = Math.min(devicePixelRatio || 1, 1.5); w = cv.width = innerWidth * d; h = cv.height = innerHeight * d;
+    d = 1; w = cv.width = innerWidth * d; h = cv.height = innerHeight * d;
     P = Array.from({length: Math.round(w * h / 90000)}, () => mk(true));
     S = Array.from({length: Math.round(w * h / 60000)}, () => ({x: Math.random() * w, y: Math.random() * h, r: (Math.random() * 3 + 1.5) * d, s: Math.random() * 6.3}));
   }
   function frame(t) {
-    if (document.body.classList.contains('moving')) return requestAnimationFrame(frame); // pausa enquanto gira
-    cx.clearRect(0, 0, w, h); cx.fillStyle = '#fff';
+    if (document.body.classList.contains('moving') || document.hidden || t - (frame.last || 0) < 32) return requestAnimationFrame(frame); // pausa enquanto gira; ~30fps
+    frame.last = t; cx.clearRect(0, 0, w, h); cx.fillStyle = '#fff';
     S.forEach(s => { const r = s.r * 2.2; cx.globalAlpha = .15 + .6 * Math.abs(Math.sin(t / 1100 + s.s)); cx.beginPath(); cx.moveTo(s.x, s.y - r); cx.quadraticCurveTo(s.x, s.y, s.x + r, s.y); cx.quadraticCurveTo(s.x, s.y, s.x, s.y + r); cx.quadraticCurveTo(s.x, s.y, s.x - r, s.y); cx.quadraticCurveTo(s.x, s.y, s.x, s.y - r); cx.fill(); });
     P.forEach((p, i) => {
       p.y += p.vy; p.a += p.va; p.x += Math.sin(t / 1500 + p.sw) * .5 * d;
@@ -264,54 +264,47 @@ document.querySelectorAll('.fx').forEach(el => {
 if (!MOBILE) try {
 /* ---------- Vita 3D (three.js) ---------- */
 const T = THREE;
-// v10: mais qualidade — antialias sempre ligado e supersampling (pelo menos 1.5x, até 2x)
-const renderer = new T.WebGLRenderer({canvas: gl, antialias: true, alpha: true, powerPreference: 'high-performance'});
-renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 1.5), 2));
-renderer.outputEncoding = T.sRGBEncoding; renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.22;
-const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// v10: nitidez sem pesar — antialias em telas normais, pixel ratio até 1.5 (em telas retina o próprio pixel já suaviza)
+const renderer = new T.WebGLRenderer({canvas: gl, antialias: devicePixelRatio < 1.5, alpha: true, powerPreference: 'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.outputEncoding = T.sRGBEncoding; renderer.toneMapping = T.ACESFilmicToneMapping;
+// valores de iluminação (dá pra mexer ao vivo abrindo o site com ?tune no fim do endereço)
+const TUNE = Object.assign({exp: 1.12, env: 1.25, key: 1.3, rim: 1.25, rim2: .55, spot: 2.0, flare: 1}, (() => { try { return JSON.parse(localStorage.getItem('vitaTune') || '{}'); } catch (e) { return {}; } })());
+renderer.toneMappingExposure = TUNE.exp;
 const scene = new T.Scene(), cam = new T.PerspectiveCamera(28, 1, .01, 10);
 const pivot = new T.Group(); pivot.rotation.order = 'YXZ'; scene.add(pivot);
 let obj = null, dirty = true, ry = 0, rx = 0;
 
-// v10 iluminação "estúdio angel": ambiente escuro com tiras de luz (reflexos de cromo) em branco-pérola, azul-gelo e lilás
+// iluminação: ambiente com softboxes (reflexos de estúdio) + luz principal + contraluzes pérola/azul-gelo
 let envTex = null;
 (function () {
   const s = new T.Scene();
-  s.add(new T.Mesh(new T.SphereGeometry(5, 48, 24), new T.MeshBasicMaterial({color: 0x07080b, side: T.BackSide})));
+  s.add(new T.Mesh(new T.SphereGeometry(5, 32, 16), new T.MeshBasicMaterial({color: 0x15161b, side: T.BackSide})));
   const box = (c, i, x, y, z, w, h) => {
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({color: new T.Color(c).multiplyScalar(i), side: T.DoubleSide}));
     m.position.set(x, y, z); m.lookAt(0, 0, 0); s.add(m);
   };
-  box(0xffffff, 10, 0, 4.2, -.5, 7, .9);        // tira longa em cima (faixa branca nas bordas)
-  box(0xfff4ea, 9, -3.6, 1.2, 2.2, 1.1, 4.2);   // softbox alto à esquerda, pérola quente
-  box(0xbfd8ff, 7, 3.7, .8, 1.6, 1.1, 4.2);     // softbox alto à direita, azul-gelo
-  box(0xffffff, 3.2, 0, 3.2, 3.6, 5, 2);        // luz de frente suave
-  box(0xd9c9ff, 3.4, -2.2, -2.6, 2.6, 4, .9);   // faixa lilás embaixo
-  box(0xffe3f2, 1.8, 3.2, -2.1, 2.2, 2.2, .7);  // um tiquinho de rosa-pérola
-  box(0xffffff, 7, -2.7, 1, -3.2, .8, 4);       // contraluz esquerdo
-  box(0xcfe2ff, 7, 2.7, 1, -3.2, .8, 4);        // contraluz direito
-  const pm = new T.PMREMGenerator(renderer); envTex = pm.fromScene(s, .015).texture; scene.environment = envTex; pm.dispose();
+  box(0xfff1e4, 6, -3, 3, 3, 3, 2); box(0xcfe0ff, 3, 3.5, 1, 2, 2, 3); box(0xffffff, 4, 0, 4, -2, 5, 1.5); box(0xe8f0ff, 2, 0, -3, 3, 4, 1);
+  box(0xffffff, 3, 0, 3, 3.5, 4, 1.4);          // faixa suave na frente (brilho no vidro/cromo)
+  box(0xd7e6ff, 4, -3.2, .5, -3, .9, 3.5);      // contraluz azul-gelo
+  box(0xf1e6ff, 4, 3.2, .5, -3, .9, 3.5);       // contraluz lilás-pérola
+  const pm = new T.PMREMGenerator(renderer); envTex = pm.fromScene(s, .02).texture; scene.environment = envTex; pm.dispose();
 })();
-const key = new T.DirectionalLight(0xfff0e6, 1.35); key.position.set(-.3, .4, .5); scene.add(key);
-const rim = new T.DirectionalLight(0xbcd4ff, 1.5); rim.position.set(.5, .2, -.5); scene.add(rim);
-const rim2 = new T.DirectionalLight(0xe0d2ff, 1.0); rim2.position.set(-.6, -.2, -.4); scene.add(rim2);
-scene.add(new T.AmbientLight(0xffffff, .1));
+const key = new T.DirectionalLight(0xfff0e0, TUNE.key); key.position.set(-.3, .4, .5); scene.add(key);
+const rim = new T.DirectionalLight(0xbcd4ff, TUNE.rim); rim.position.set(.5, .2, -.5); scene.add(rim);
+const rim2 = new T.DirectionalLight(0xe6dcff, TUNE.rim2); rim2.position.set(-.6, -.2, -.4); scene.add(rim2);
+scene.add(new T.AmbientLight(0xffffff, .12));
 // holofote: luz de cima que ilumina o Vita (o feixe visível é o .spot no CSS)
-const spotL = new T.SpotLight(0xfff3e6, 2.4, 0, .5, .75, 1); spotL.position.set(0, .5, .3); spotL.target.position.set(0, 0, 0); scene.add(spotL, spotL.target);
-// luz que varre o Vita de tempos em tempos (o brilho passa pelo corpo) + luz que segue o mouse
-const sweepL = new T.PointLight(0xeaf2ff, 0, 0, 1); sweepL.position.set(-.2, .05, .12); scene.add(sweepL);
-const mouseL = new T.PointLight(0xffffff, 0, 0, 1); mouseL.position.set(0, 0, .16); scene.add(mouseL);
-const mouse = {x: 0, y: 0, tx: 0, ty: 0, on: 0};
-addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = -(e.clientY / innerHeight * 2 - 1); mouse.on = 1; }, {passive: true});
+const spotL = new T.SpotLight(0xfff3e6, TUNE.spot, 0, .5, .75, 1); spotL.position.set(0, .5, .3); spotL.target.position.set(0, 0, 0); scene.add(spotL, spotL.target);
 
 const tl = new T.TextureLoader();
 const tx = (f, srgb) => { const d = LD.add(); const t = tl.load('assets/vita/' + f, () => { dirty = true; d(); }, undefined, d); t.anisotropy = renderer.capabilities.getMaxAnisotropy(); if (srgb) t.encoding = T.sRGBEncoding; return t; };
 const std = (p, extra) => new T.MeshStandardMaterial(Object.assign({map: tx(p + '_color.jpg', 1), normalMap: tx(p + '_normal.jpg'), roughnessMap: tx(p + '_rough.jpg'), metalnessMap: tx(p + '_metal.jpg'), roughness: 1, metalness: 1}, extra || {}));
 const MATS = {
-  'PS-Vita_Body': std('body', {envMap: envTex, envMapIntensity: 1.6}),
-  'Bumpers_and_Buttons': std('btn', {envMap: envTex, envMapIntensity: 1.5, emissiveMap: tx('btn_emis.jpg', 1), emissive: 0xffffff, emissiveIntensity: .9}),
-  'Screen': new T.MeshPhysicalMaterial({color: 0x040405, roughness: .06, metalness: 0, clearcoat: 1, clearcoatRoughness: .03, envMap: envTex, envMapIntensity: 2.2}),
-  'See_Through_Buttons': new T.MeshPhysicalMaterial({color: 0x1a1b20, roughness: .12, transparent: true, opacity: .5, envMap: envTex, envMapIntensity: 1.8})
+  'PS-Vita_Body': std('body', {envMap: envTex, envMapIntensity: TUNE.env}),
+  'Bumpers_and_Buttons': std('btn', {envMap: envTex, envMapIntensity: TUNE.env, emissiveMap: tx('btn_emis.jpg', 1), emissive: 0xffffff, emissiveIntensity: .75}),
+  'Screen': new T.MeshPhysicalMaterial({color: 0x040405, roughness: .08, metalness: 0, clearcoat: 1, clearcoatRoughness: .04, envMap: envTex, envMapIntensity: TUNE.env * 1.4}),
+  'See_Through_Buttons': new T.MeshPhysicalMaterial({color: 0x1a1b20, roughness: .12, transparent: true, opacity: .5, envMap: envTex, envMapIntensity: TUNE.env})
 };
 function parseOBJ(txt) {
   const V = [], N = [], U = [], groups = new Map(); let g = 'g', m = '';
@@ -354,64 +347,23 @@ fetch('assets/vita/vita.obj').then(r => { if (!r.ok) throw new Error('HTTP ' + r
 }).catch(e => fail(new Error('não consegui carregar assets/vita/vita.obj (' + e.message + '). Suba a pasta assets inteira; abrindo o arquivo direto do computador o navegador bloqueia — use o GitHub Pages.')));
 
 
-/* ---------- v10: brilhos em estrela (estilo y2k) nos botões, cantos e logo ---------- */
-const flareTex = (() => {
-  const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
-  x.globalCompositeOperation = 'lighter';
-  const ray = (len, th, ang, a) => { x.save(); x.translate(128, 128); x.rotate(ang);
-    const g = x.createLinearGradient(-len, 0, len, 0);
-    g.addColorStop(0, 'rgba(190,215,255,0)'); g.addColorStop(.38, 'rgba(235,242,255,' + a * .55 + ')'); g.addColorStop(.5, 'rgba(255,255,255,' + a + ')'); g.addColorStop(.62, 'rgba(235,242,255,' + a * .55 + ')'); g.addColorStop(1, 'rgba(215,200,255,0)');
-    x.fillStyle = g; x.beginPath(); x.ellipse(0, 0, len, th, 0, 0, 7); x.fill(); x.restore(); };
-  ray(126, 3.2, 0, 1); ray(126, 3.2, Math.PI / 2, 1); ray(70, 2.2, Math.PI / 4, .55); ray(70, 2.2, -Math.PI / 4, .55);
-  const core = x.createRadialGradient(128, 128, 0, 128, 128, 48);
-  core.addColorStop(0, 'rgba(255,255,255,1)'); core.addColorStop(.18, 'rgba(255,255,255,.85)'); core.addColorStop(.5, 'rgba(225,235,255,.22)'); core.addColorStop(1, 'rgba(255,255,255,0)');
-  x.fillStyle = core; x.fillRect(0, 0, 256, 256);
-  const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t;
-})();
-const bloomTex = (() => { // glow redondo bem macio (bloom falso, localizado)
-  const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'), g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
-  g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(.25, 'rgba(235,242,255,.35)'); g.addColorStop(.6, 'rgba(215,225,255,.08)'); g.addColorStop(1, 'rgba(255,255,255,0)');
-  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new T.CanvasTexture(c);
-})();
-const twinkles = []; let sweepSp = null;
+/* ---------- v10: brilhos em estrela (DOM + CSS: não pesam no 3D) ---------- */
+const flEl = document.createElement('div'); flEl.id = 'flares'; flEl.setAttribute('aria-hidden', 'true'); document.body.appendChild(flEl);
+let FLP = [];
 function makeFlares() {
-  const fx = maxX + .0007; // um fio na frente da superfície do Vita
-  const pts = [ // [z, y, tamanho, velocidade, fase]
-    [FC.z, FC.y + K, .030, 1.1, 0], [FC.z - K, FC.y, .020, .8, 2.1], [DC.z, DC.y + D, .026, .9, 4.2], [DC.z + D, DC.y, .018, 1.3, 1.1],
-    [.0709, -.0225, .026, 1.0, 3.3], [.056, .0412, .032, .7, 5.2], [-.056, .0412, .028, .85, .6],
-    [-.0558, .0315, .040, .55, 2.7], [.0558, -.0315, .036, .6, 4.6], [.0558, .0315, .022, 1.2, 1.7]
-  ];
-  pts.forEach(([z, y, size, speed, ph]) => {
-    const m = new T.SpriteMaterial({map: flareTex, blending: T.AdditiveBlending, transparent: true, depthWrite: false, opacity: .6});
-    const sp = new T.Sprite(m); sp.position.set(fx, y, z); sp.scale.setScalar(size);
-    const bm = new T.SpriteMaterial({map: bloomTex, blending: T.AdditiveBlending, transparent: true, depthWrite: false, opacity: .3});
-    const bs = new T.Sprite(bm); bs.position.set(fx - .0004, y, z); bs.scale.setScalar(size * 1.9);
-    obj.add(bs, sp); twinkles.push({sp, bs, size, speed, ph});
+  const fx = maxX + .0008;
+  const pts = [[FC.z, FC.y + K, 30, 3.1, 0], [FC.z - K, FC.y, 20, 2.4, -1.2], [DC.z, DC.y + D, 26, 3.6, -2], [.0709, -.0225, 24, 2.8, -.6],
+    [.056, .0412, 34, 4.2, -1.8], [-.056, .0412, 30, 3.4, -.3], [-.0558, .0315, 40, 5, -2.6], [.0558, -.0315, 34, 4.6, -3.4]];
+  pts.forEach(([z, y, px, dur, delay]) => {
+    const i = document.createElement('i'); i.className = 'fl'; i.style.cssText = `--s:${px}px;--t:${dur}s;--d:${delay}s`; i.innerHTML = '<b></b>'; flEl.appendChild(i);
+    FLP.push({el: i, v: new T.Vector3(fx, y, z), px});
   });
-  // risco de luz que atravessa o Vita de vez em quando
-  const sm = new T.SpriteMaterial({map: bloomTex, blending: T.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0});
-  sweepSp = new T.Sprite(sm); sweepSp.position.set(fx, 0, 0); sweepSp.scale.set(.05, .09, 1); obj.add(sweepSp);
 }
-function animateLights(t) {
-  const s = t / 1000, beat = Math.min(1, window.angelBeat || 0);
-  // as estrelinhas piscam (cada uma no seu ritmo) e dão um empurrão na batida da música
-  for (const w of twinkles) {
-    const v = Math.pow(Math.max(0, Math.sin(s * w.speed + w.ph)), 4), k = Math.min(1, v + beat * .6);
-    w.sp.material.opacity = .22 + .78 * k; w.sp.scale.setScalar(w.size * (.62 + .55 * k)); w.sp.material.rotation = Math.sin(s * .4 + w.ph) * .25;
-    w.bs.material.opacity = .12 + .38 * k; w.bs.scale.setScalar(w.size * (1.5 + .9 * k));
-  }
-  // luz que varre o corpo (um ciclo de ~9s: 3s de passagem, o resto parado)
-  const cyc = (s % 9) / 3, p = cyc < 1 ? cyc : -1;
-  if (p >= 0) { const bell = Math.sin(p * Math.PI);
-    sweepL.position.set(-.16 + p * .32, .04 - .02 * p, .1); sweepL.intensity = 2.6 * bell;
-    if (sweepSp) { sweepSp.position.z = .1 - p * .2; sweepSp.position.y = .006 + .02 * Math.sin(p * 6); sweepSp.material.opacity = .5 * bell; }
-  } else { sweepL.intensity = 0; if (sweepSp) sweepSp.material.opacity = 0; }
-  // contraluzes respiram devagar e a luz do mouse acompanha o cursor
-  rim.intensity = 1.5 + .35 * Math.sin(s * .7) + beat * .6; rim2.intensity = 1 + .3 * Math.sin(s * .5 + 2);
-  mouse.x += (mouse.tx - mouse.x) * .12; mouse.y += (mouse.ty - mouse.y) * .12;
-  mouseL.position.set(mouse.x * .14, mouse.y * .08, .13); mouseL.intensity = mouse.on * .9;
+function placeFlares(dot) {
+  flEl.style.opacity = dot > .3 ? Math.min(1, (dot - .3) * 3) * TUNE.flare : 0;
+  if (dot <= .3) return;
+  for (const f of FLP) { const v = f.v.clone(); obj.localToWorld(v); v.project(cam); f.el.style.transform = `translate3d(${(v.x * .5 + .5) * innerWidth}px,${(-v.y * .5 + .5) * innerHeight}px,0)`; }
 }
-
 function fit() {
   const w = innerWidth, h = innerHeight, a = w / h;
   renderer.setSize(w, h, false); cam.aspect = a;
@@ -437,6 +389,7 @@ function overlay() {
   const dot = n.dot(cam.position.clone().sub(c0).normalize());
   vs.style.opacity = dot > .1 ? Math.min(1, (dot - .1) * 4) : 0;
   vs.classList.toggle('on', dot > .3);
+  placeFlares(dot);
   vs.style.transform = homography(pts);
 }
 
@@ -537,15 +490,29 @@ const stop = (e, noClick) => {
 document.addEventListener('pointerup', stop); document.addEventListener('pointercancel', stop);
 document.addEventListener('dblclick', e => { if (!e.target.closest('a,button,input')) resetView(); });
 
-let lastAmb = 0;
-(function tick(t) {
-  const amb = !REDUCED && obj && !document.hidden && t - lastAmb > 40;
-  if (amb) { lastAmb = t; animateLights(t); }
+(function tick() {
   if (dirty || glows.length) { updateGlows(); renderer.render(scene, cam); overlay(); dirty = false; }
-  else if (amb) renderer.render(scene, cam);
   requestAnimationFrame(tick);
-})(0);
+})();
 
+/* ---------- painel de ajuste de luz (abra o site com ?tune no endereço, ou aperte T) ---------- */
+function tunePanel() {
+  if (document.getElementById('tune')) return;
+  const P = document.createElement('div'); P.id = 'tune';
+  const rows = [['exp', 'brilho geral', .6, 2], ['env', 'reflexos', 0, 3], ['key', 'luz principal', 0, 3], ['rim', 'contraluz azul', 0, 3], ['rim2', 'contraluz lilás', 0, 3], ['spot', 'holofote', 0, 5], ['flare', 'estrelinhas', 0, 1.5]];
+  P.innerHTML = '<b>ajustar luz ✦</b>' + rows.map(r => `<label>${r[1]}<input type="range" data-k="${r[0]}" min="${r[2]}" max="${r[3]}" step=".05" value="${TUNE[r[0]]}"><span>${(+TUNE[r[0]]).toFixed(2)}</span></label>`).join('') + '<div><button type="button" id="tnCopy">copiar valores</button><button type="button" id="tnReset">padrão</button></div>';
+  document.body.appendChild(P);
+  const apply2 = () => {
+    renderer.toneMappingExposure = TUNE.exp; key.intensity = TUNE.key; rim.intensity = TUNE.rim; rim2.intensity = TUNE.rim2; spotL.intensity = TUNE.spot; flEl.style.opacity = TUNE.flare;
+    ['PS-Vita_Body', 'Bumpers_and_Buttons', 'See_Through_Buttons'].forEach(k => MATS[k].envMapIntensity = TUNE.env); MATS.Screen.envMapIntensity = TUNE.env * 1.4;
+    try { localStorage.setItem('vitaTune', JSON.stringify(TUNE)); } catch (e) {} dirty = true;
+  };
+  P.addEventListener('input', e => { const k = e.target.dataset.k; if (!k) return; TUNE[k] = +e.target.value; e.target.nextElementSibling.textContent = TUNE[k].toFixed(2); apply2(); });
+  P.querySelector('#tnCopy').onclick = () => { const t = JSON.stringify(TUNE); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => {}); P.querySelector('#tnCopy').textContent = 'copiado!'; setTimeout(() => P.querySelector('#tnCopy').textContent = 'copiar valores', 1200); };
+  P.querySelector('#tnReset').onclick = () => { try { localStorage.removeItem('vitaTune'); } catch (e) {} location.reload(); };
+}
+if (/[?&]tune/.test(location.search)) tunePanel();
+addEventListener('keydown', e => { if (e.key && e.key.toLowerCase() === 't' && !e.ctrlKey && !e.metaKey && !/input|textarea/i.test((e.target || {}).tagName || '')) tunePanel(); });
 
 glowKey = glowKeyImpl; resetView = resetViewImpl;
 } catch (err) { fail(err); }

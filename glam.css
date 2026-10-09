@@ -1,33 +1,38 @@
-/* ===== v10 — glam ✦  (estrelas halftone, brilho perolado atrás do Vita, rastro de luz) =====
+/* ===== v10 — glam ✦ (leve): estrelas halftone, brilho perolado, adesivos y2k =====
+   Tudo aqui é ESTÁTICO (desenhado uma vez), sem blend-mode e sem blur: quase não custa nada.
    Pra desfazer: apague glam.css, glam.js e as 2 linhas + o <div class="glam"> no index.html */
-.glam{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--beat:0}
-.glam .gs{position:absolute;mix-blend-mode:screen;transform:scale(calc(1 + var(--beat) * .045));opacity:calc(var(--o,.7) + var(--beat) * .25)}
-.glam .gs canvas{display:block;width:100%;height:auto;will-change:transform}
-/* estrela grande atrás do Vita (a "flor" de pontinhos do vídeo) */
-.glam .g0{left:50%;top:50%;width:min(96vw,168vh);margin:calc(min(96vw,168vh) / -2) 0 0 calc(min(96vw,168vh) / -2);--o:.3}
-.glam .g0 canvas{animation:gspin 140s linear infinite}
-/* estrelas dos cantos */
-.glam .g1{right:-16vmin;top:-20vmin;width:78vmin;--o:.8}
-.glam .g1 canvas{transform:rotate(14deg);animation:gfloat 11s ease-in-out infinite alternate}
-.glam .g2{left:-18vmin;bottom:-24vmin;width:88vmin;--o:.8}
-.glam .g2 canvas{transform:rotate(-16deg);animation:gfloat2 13s ease-in-out infinite alternate}
-.glam .g3{left:7vw;top:12vh;width:15vmin;--o:.75}
-.glam .g3 canvas{animation:gtw 4.2s ease-in-out infinite alternate}
-.glam .g4{right:9vw;bottom:16vh;width:11vmin;--o:.7}
-.glam .g4 canvas{animation:gtw 5.4s ease-in-out -2s infinite alternate}
-/* brilho perolado/iridescente (azul-gelo, lilás, branco) respirando atrás do Vita */
-.glam .irid{position:absolute;left:50%;top:50%;width:84vmin;height:84vmin;margin:-42vmin 0 0 -42vmin;border-radius:50%;mix-blend-mode:screen;opacity:calc(.3 + var(--beat) * .2);
-  background:conic-gradient(from 0deg,rgba(176,204,255,.55),rgba(222,200,255,.45),rgba(255,255,255,.6),rgba(196,238,255,.45),rgba(255,226,242,.28),rgba(176,204,255,.55));
-  -webkit-mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 38%,transparent 70%);mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 38%,transparent 70%);animation:gspin 46s linear infinite}
-/* rastro de luz horizontal (lens streak) na altura da tela */
-.glam .streak{position:absolute;left:-5%;right:-5%;top:49%;height:2px;mix-blend-mode:screen;animation:gstreak 7s ease-in-out infinite alternate;
-  background:linear-gradient(90deg,transparent,rgba(190,214,255,.5) 18%,rgba(255,255,255,.95) 50%,rgba(222,205,255,.5) 82%,transparent);box-shadow:0 0 22px 5px rgba(196,218,255,.28),0 0 70px 14px rgba(196,218,255,.12)}
-@keyframes gspin{to{transform:rotate(360deg)}}
-@keyframes gfloat{to{transform:rotate(19deg) translate(-2vmin,3vmin)}}
-@keyframes gfloat2{to{transform:rotate(-12deg) translate(3vmin,-2vmin)}}
-@keyframes gtw{0%{opacity:.25;transform:scale(.8) rotate(0)}100%{opacity:1;transform:scale(1.08) rotate(14deg)}}
-@keyframes gstreak{0%{opacity:.25;transform:scaleX(.7)}100%{opacity:.8;transform:scaleX(1)}}
-body.moving .glam canvas,body.moving .glam .irid,body.moving .glam .streak{animation-play-state:paused}
-body.mobile .glam .g0,body.mobile .glam .g3,body.mobile .glam .g4,body.mobile .glam .irid,body.mobile .glam .streak{display:none}
-body.mobile .glam canvas{animation:none!important}
-@media(prefers-reduced-motion:reduce){.glam canvas,.glam .irid,.glam .streak{animation:none!important}}
+.glam{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.glam .gs{position:absolute}
+.glam .gs canvas{display:block;width:100%;height:auto}
+.glam .g0{left:50%;top:50%;width:min(92vw,160vh);margin:calc(min(92vw,160vh) / -2) 0 0 calc(min(92vw,160vh) / -2);opacity:.34}
+.glam .g1{right:-14vmin;top:-18vmin;width:66vmin;opacity:.82}.glam .g1 canvas{transform:rotate(14deg)}
+.glam .g2{left:-16vmin;bottom:-22vmin;width:74vmin;opacity:.82}.glam .g2 canvas{transform:rotate(-16deg)}
+.glam .g3{left:7vw;top:12vh;width:13vmin;opacity:.8;animation:gtw 4.2s ease-in-out infinite alternate}
+.glam .g4{right:9vw;bottom:16vh;width:10vmin;opacity:.75;animation:gtw 5.4s ease-in-out -2s infinite alternate}
+@keyframes gtw{from{opacity:.25}to{opacity:1}}
+/* brilho perolado atrás do Vita (gradientes simples, sem conic/blur) */
+.glam .irid{position:absolute;left:50%;top:50%;width:90vmin;height:90vmin;margin:-45vmin 0 0 -45vmin;border-radius:50%;
+  background:radial-gradient(circle at 38% 40%,rgba(190,214,255,.34),transparent 46%),radial-gradient(circle at 64% 60%,rgba(226,206,255,.26),transparent 48%),radial-gradient(circle,rgba(255,255,255,.2),transparent 66%)}
+.glam .streak{position:absolute;left:0;right:0;top:49%;height:2px;opacity:.55;
+  background:linear-gradient(90deg,transparent,rgba(190,214,255,.5) 18%,rgba(255,255,255,.95) 50%,rgba(222,205,255,.5) 82%,transparent)}
+/* adesivos y2k */
+.glam .st{position:absolute;display:block}
+.glam .st svg{display:block;width:100%;height:auto;overflow:visible}
+.glam .cd{left:-6vmin;bottom:-6vmin;width:30vmin;height:30vmin;border-radius:50%;opacity:.92;transform:rotate(-14deg);
+  background:radial-gradient(circle,#0a0b0e 0 6%,#f4f6fb 6.4% 9%,transparent 9.4%),conic-gradient(from 20deg,#e8ecf5,#9aa3b8,#f7f9ff,#aeb6ca,#e5d9ff,#b9d4ff,#f7f9ff,#8e97ad,#e8ecf5);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 0 9px rgba(20,22,28,.18),0 0 30px rgba(220,232,255,.28)}
+.glam .cd:after{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.55) 48%,transparent 58%)}
+.glam .gring{right:3vw;top:44vh;width:15vmin;opacity:.95}
+.glam .gring svg{animation:gturn 38s linear infinite}
+@keyframes gturn{to{transform:rotate(360deg)}}
+.glam .bar{left:14px;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;font:500 9px/1 "DM Mono",monospace;letter-spacing:.34em;color:rgba(255,255,255,.55);white-space:nowrap}
+.glam .bar2{right:14px;top:34%;writing-mode:vertical-rl;font:500 9px/1 "DM Mono",monospace;letter-spacing:.34em;color:rgba(255,255,255,.5);white-space:nowrap}
+.glam .code{left:12px;top:calc(50% + 150px);width:14px;height:90px;opacity:.55;background:repeating-linear-gradient(0deg,#fff 0 2px,transparent 2px 4px,#fff 4px 5px,transparent 5px 8px,#fff 8px 11px,transparent 11px 13px)}
+/* celular: só as duas estrelas dos cantos (estáticas) */
+body.mobile .glam .g0,body.mobile .glam .g3,body.mobile .glam .g4,body.mobile .glam .irid,body.mobile .glam .streak,body.mobile .glam .st{display:none}
+body.lite .glam .g3,body.lite .glam .g4,body.lite .glam .gring svg{animation:none}
+@media(max-width:1000px){.glam .bar,.glam .bar2,.glam .code,.glam .gring{display:none}}
+@media(prefers-reduced-motion:reduce){.glam .gs,.glam .gring svg{animation:none!important}}
+/* detalhes y2k dentro da tela (estáticos) */
+.tags span{background:linear-gradient(135deg,#fff,#e8efff 48%,#f1e8ff);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 2px 6px rgba(110,120,150,.22)}
+.menu-item.active{background:linear-gradient(180deg,#fff,#dde4f4 56%,#f5f7fc)!important;border-color:#fff}
