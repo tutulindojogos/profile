@@ -1,0 +1,33 @@
+/* ===== v10 — glam ✦  (estrelas halftone, brilho perolado atrás do Vita, rastro de luz) =====
+   Pra desfazer: apague glam.css, glam.js e as 2 linhas + o <div class="glam"> no index.html */
+.glam{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--beat:0}
+.glam .gs{position:absolute;mix-blend-mode:screen;transform:scale(calc(1 + var(--beat) * .045));opacity:calc(var(--o,.7) + var(--beat) * .25)}
+.glam .gs canvas{display:block;width:100%;height:auto;will-change:transform}
+/* estrela grande atrás do Vita (a "flor" de pontinhos do vídeo) */
+.glam .g0{left:50%;top:50%;width:min(96vw,168vh);margin:calc(min(96vw,168vh) / -2) 0 0 calc(min(96vw,168vh) / -2);--o:.3}
+.glam .g0 canvas{animation:gspin 140s linear infinite}
+/* estrelas dos cantos */
+.glam .g1{right:-16vmin;top:-20vmin;width:78vmin;--o:.8}
+.glam .g1 canvas{transform:rotate(14deg);animation:gfloat 11s ease-in-out infinite alternate}
+.glam .g2{left:-18vmin;bottom:-24vmin;width:88vmin;--o:.8}
+.glam .g2 canvas{transform:rotate(-16deg);animation:gfloat2 13s ease-in-out infinite alternate}
+.glam .g3{left:7vw;top:12vh;width:15vmin;--o:.75}
+.glam .g3 canvas{animation:gtw 4.2s ease-in-out infinite alternate}
+.glam .g4{right:9vw;bottom:16vh;width:11vmin;--o:.7}
+.glam .g4 canvas{animation:gtw 5.4s ease-in-out -2s infinite alternate}
+/* brilho perolado/iridescente (azul-gelo, lilás, branco) respirando atrás do Vita */
+.glam .irid{position:absolute;left:50%;top:50%;width:84vmin;height:84vmin;margin:-42vmin 0 0 -42vmin;border-radius:50%;mix-blend-mode:screen;opacity:calc(.3 + var(--beat) * .2);
+  background:conic-gradient(from 0deg,rgba(176,204,255,.55),rgba(222,200,255,.45),rgba(255,255,255,.6),rgba(196,238,255,.45),rgba(255,226,242,.28),rgba(176,204,255,.55));
+  -webkit-mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 38%,transparent 70%);mask-image:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 38%,transparent 70%);animation:gspin 46s linear infinite}
+/* rastro de luz horizontal (lens streak) na altura da tela */
+.glam .streak{position:absolute;left:-5%;right:-5%;top:49%;height:2px;mix-blend-mode:screen;animation:gstreak 7s ease-in-out infinite alternate;
+  background:linear-gradient(90deg,transparent,rgba(190,214,255,.5) 18%,rgba(255,255,255,.95) 50%,rgba(222,205,255,.5) 82%,transparent);box-shadow:0 0 22px 5px rgba(196,218,255,.28),0 0 70px 14px rgba(196,218,255,.12)}
+@keyframes gspin{to{transform:rotate(360deg)}}
+@keyframes gfloat{to{transform:rotate(19deg) translate(-2vmin,3vmin)}}
+@keyframes gfloat2{to{transform:rotate(-12deg) translate(3vmin,-2vmin)}}
+@keyframes gtw{0%{opacity:.25;transform:scale(.8) rotate(0)}100%{opacity:1;transform:scale(1.08) rotate(14deg)}}
+@keyframes gstreak{0%{opacity:.25;transform:scaleX(.7)}100%{opacity:.8;transform:scaleX(1)}}
+body.moving .glam canvas,body.moving .glam .irid,body.moving .glam .streak{animation-play-state:paused}
+body.mobile .glam .g0,body.mobile .glam .g3,body.mobile .glam .g4,body.mobile .glam .irid,body.mobile .glam .streak{display:none}
+body.mobile .glam canvas{animation:none!important}
+@media(prefers-reduced-motion:reduce){.glam canvas,.glam .irid,.glam .streak{animation:none!important}}
