@@ -30,7 +30,7 @@
   function sparks(x, y, n, dmin, dmax, life) {
     for (let i = 0; i < n; i++) {
       const a = (i / n) * 6.283 + rand(-.25, .25), d = rand(dmin, dmax);
-      const s = document.createElement('i'); s.className = 'wow-spk'; s.textContent = ['✦', '✧', '·', '✦'][i % 4];
+      const s = document.createElement('i'); s.className = 'wow-spk'; s.textContent = '';
       s.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(a) * d | 0}px;--dy:${Math.sin(a) * d | 0}px;--r:${rand(-160, 160) | 0}deg;--t:${(life || 1) + rand(0, .4)}s;animation-delay:${rand(0, .1).toFixed(2)}s`;
       B.appendChild(s); setTimeout(() => s.remove(), 2000);
     }
@@ -161,7 +161,7 @@
   /* ---------- 4) palavras secretas ---------- */
   const WORDS = {
     psp: {g: ['△', '○', '✕', '□'], msg: '△ ○ ✕ □'},
-    y2k: {g: ['✧', '♡', '✦', '☆'], msg: 'y2k forever ✧'},
+    y2k: {g: ['♡', '♥', '♡', '♥'], msg: 'wine &amp; roses ♡'},
     xoxo: {g: ['♡', '♥', '✧'], msg: 'xoxo ♡'}
   };
   let buf = '';
@@ -183,7 +183,7 @@
   });
 
   /* ---------- 5) título da aba chama você de volta ---------- */
-  const T0 = document.title, away = ['✧ come back ✧', 'angel.exe is waiting ✦']; let ti = 0, tt = 0;
+  const T0 = document.title, away = ['✧ come back ✧', 'butterfly.exe is waiting ♡']; let ti = 0, tt = 0;
   document.addEventListener('visibilitychange', () => {
     clearInterval(tt);
     if (document.hidden) { ti = 0; document.title = away[0]; tt = setInterval(() => { ti = (ti + 1) % away.length; document.title = away[ti]; }, 1800); }

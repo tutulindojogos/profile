@@ -332,11 +332,11 @@ const OFFSET = 0;
   /* ---------- estrelas cadentes ---------- */
   const homeEl = $('#home');
   const homeOpen = () => homeEl && !homeEl.classList.contains('hidden');
-  const WISHES = ['wish received ✧', 'make it count ✦', 'granted, probably ✧', 'stay online ✦', 'angel heard you ✧'];
+  const WISHES = ['wish received ✧', 'make it count ✦', 'granted, probably ✧', 'stay pretty ✦', 'the butterflies heard you ✧'];
   function burst(x, y) {
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * 6.283 + rand(-.2, .2), d = rand(60, 150);
-      const s = mk('i', 'wish-spk', ['✦', '✧', '·', '✦'][i % 4]);
+      const s = mk('i', 'wish-spk', '');
       s.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(a) * d | 0}px;--dy:${Math.sin(a) * d | 0}px;--r:${rand(-120, 120) | 0}deg;animation-delay:${(Math.random() * .08).toFixed(2)}s`;
       document.body.appendChild(s); setTimeout(() => s.remove(), 1200);
     }
@@ -352,8 +352,8 @@ const OFFSET = 0;
     const ang = fromRight ? rand(148, 162) : rand(18, 32);             // rumo: baixo-esquerda ou baixo-direita
     const x0 = fromRight ? rand(W * .55, W * .95) : rand(W * .05, W * .45), y0 = rand(H * .04, H * .3);
     const len = Math.min(W * .62, 760), dur = rand(2.6, 3.4);
-    const b = mk('button', 'wish', '<i class="wish-tail"></i><i class="wish-head">✦</i>');
-    b.type = 'button'; b.setAttribute('aria-label', 'Estrela cadente: clique para fazer um pedido');
+    const b = mk('button', 'wish', '<i class="wish-tail"></i><i class="wish-head"></i>');
+    b.type = 'button'; b.setAttribute('aria-label', 'Borboleta: clique para fazer um pedido');
     b.style.cssText = `--x0:${x0 | 0}px;--y0:${y0 | 0}px;--ang:${ang | 0}deg;--len:${len | 0}px;--dur:${dur.toFixed(2)}s`;
     const catchIt = () => {
       if (b.classList.contains('caught')) return;

@@ -116,10 +116,40 @@ body:before{opacity:.18!important}
 /* aba SOCIAL em duas colunas (5 cartões cabem na tela do Vita) */
 body:not(.mobile) #social.active-panel{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start}
 body:not(.mobile) #social .panel-title{grid-column:1/-1}
-body:not(.mobile) #social .link-card:last-child{grid-column:1/-1}
 body:not(.mobile) #social .link-card{margin:5px 0}
 .play-ring{background:rgba(10,2,6,.3)!important;color:#fff!important;text-shadow:0 0 10px #ff3b55,0 2px 8px #000!important}
 .tr.locked{opacity:.78!important}
 .tr.locked .ic{background:rgba(255,255,255,.07)!important;color:var(--rose2)!important;opacity:1!important}
 .toasts{z-index:300!important}
 body.mobile .pad,.pad{background:linear-gradient(180deg,#1a050c,#0a0206)!important}
+
+/* ===== mais borboletas ===== */
+.bi{display:inline-block;width:1.15em;height:1.15em;margin-right:.4em;vertical-align:-.25em;background:url(assets/angel-star.svg?v=13) center/contain no-repeat}
+.menu-item.active .bi{filter:brightness(1.4) saturate(.8)}
+.bfi{display:block;width:100%;height:100%;object-fit:contain;padding:2px}
+.tr .ic{overflow:hidden}
+/* partículas e brilhos agora são borboletas */
+.tw,.wish-spk,.wow-spk,.kfx i{font-size:0!important;color:transparent!important;text-shadow:none!important;background:url(assets/angel-star.svg?v=13) center/contain no-repeat!important}
+.tw{width:15px!important;height:15px!important}.tw.b{width:11px!important;height:11px!important}
+.wish-spk,.wow-spk{width:17px;height:17px}
+.kfx i{width:calc(22px * var(--s));height:calc(22px * var(--s))}
+.wish-head{font-size:0!important;width:40px!important;height:40px!important;left:-20px!important;top:-20px!important;background:url(assets/angel-star.svg?v=13) center/contain no-repeat;filter:drop-shadow(0 0 10px #ff3b55);animation:flap .3s ease-in-out infinite alternate}
+.rip{border-color:#ff3b55!important}
+/* borboletas voando */
+.bfly{position:fixed;left:0;top:calc(var(--y) * 1vh);width:var(--s);height:var(--s);pointer-events:none;z-index:-1;animation:bflyR var(--t) linear var(--d) infinite;will-change:transform}
+.bfly.l{animation-name:bflyL}
+.bfly.front{z-index:7;opacity:.9}
+.bfly.dark u{filter:brightness(.6) saturate(1.2)}
+.bfly b{display:block;width:100%;height:100%;animation:bobR var(--bt) ease-in-out infinite alternate}
+.bfly.l b{animation-name:bobL}
+.bfly u{display:block;width:100%;height:100%;background:url(assets/angel-star.svg?v=13) center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(255,59,85,.55));animation:flap var(--fl) ease-in-out infinite alternate}
+@keyframes bflyR{from{transform:translateX(-12vw)}to{transform:translateX(112vw)}}
+@keyframes bflyL{from{transform:translateX(112vw)}to{transform:translateX(-12vw)}}
+@keyframes bobR{from{transform:translateY(calc(var(--amp) * -1)) rotate(72deg)}to{transform:translateY(var(--amp)) rotate(108deg)}}
+@keyframes bobL{from{transform:translateY(calc(var(--amp) * -1)) rotate(-72deg)}to{transform:translateY(var(--amp)) rotate(-108deg)}}
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.22)}}
+body.moving .bfly,body.moving .bfly b,body.moving .bfly u{animation-play-state:paused}
+body.lite .bfly:nth-of-type(n+5){display:none}
+/* cursor: borboleta */
+html,body,#vscreen{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 100 100'%3E%3Cg stroke='%231a0208' stroke-width='3' stroke-linejoin='round' fill='%23d4162f'%3E%3Cpath d='M48 44C40 18 16 8 7 18c-7 9 2 30 18 36 10 4 18 0 23-10z'/%3E%3Cpath d='M52 44C60 18 84 8 93 18c7 9-2 30-18 36-10 4-18 0-23-10z'/%3E%3Cpath d='M48 54C36 52 22 60 22 74c0 11 12 17 21 10 5-4 7-18 5-30z' fill='%23901026'/%3E%3Cpath d='M52 54C64 52 78 60 78 74c0 11-12 17-21 10-5-4-7-18-5-30z' fill='%23901026'/%3E%3C/g%3E%3Crect x='47.5' y='36' width='5' height='36' rx='2.5' fill='%2312010a'/%3E%3C/svg%3E") 14 14,auto}
+a,button,input,.menu-item{cursor:pointer}

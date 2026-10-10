@@ -1,4 +1,4 @@
-/* ===== v10 — glam ✦ : desenha tudo uma vez (canvas/SVG estáticos) ===== */
+/* ===== v10 — glam ♡ : desenha tudo uma vez (canvas/SVG estáticos) ===== */
 (function () {
   const root = document.getElementById('glam'); if (!root) return;
   const mobile = matchMedia('(max-width: 760px)').matches;
@@ -42,7 +42,7 @@
   [['12vw', '31vh', '6.5vmin', -12], ['31vw', '9vh', '4.4vmin', 10], ['69vw', '17vh', '5.5vmin', 6], ['89vw', '60vh', '4vmin', -8], ['21vw', '74vh', '4.8vmin', 14], ['80vw', '82vh', '3.4vmin', 0]]
     .forEach(([l, t, w, r]) => sticker('sp', chrome(), `left:${l};top:${t};width:${w};transform:rotate(${r}deg)`));
   sticker('cd', '');
-  const txt = 'stay beautiful ✦ butterfly effect ✦ lnerita ✦ ';
+  const txt = 'stay beautiful ♡ butterfly effect ♡ lnerita ♡ ';
   sticker('gring', `<svg viewBox="0 0 120 120"><defs><path id="rp" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs><circle cx="60" cy="60" r="57" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.55)" stroke-width="1"/><text font-family="DM Mono,monospace" font-size="9.4" letter-spacing="2.6" fill="#fff"><textPath href="#rp">${txt}${txt}</textPath></text><g transform="translate(60 60) scale(.5)"><path d="M-2-6C-8-44-40-50-47-34c-5 14 4 30 20 34 8 2 20 0 25-6zM2-6C8-44 40-50 47-34c5 14-4 30-20 34-8 2-20 0-25-6zM-2 4C-18 2-36 12-32 32c3 12 20 14 28 4 4-6 4-20 2-32zM2 4C18 2 36 12 32 32c-3 12-20 14-28 4-4-6-4-20-2-32z" fill="#ff6b81"/></g></svg>`);
   const b1 = document.createElement('span'); b1.className = 'st bar'; b1.textContent = '🦋 lnerita — butterfly system — est. 2026 🦋'; root.appendChild(b1);
   const b2 = document.createElement('span'); b2.className = 'st bar2'; b2.textContent = 'stay pretty ✧ stay dangerous ✧ stay pretty'; root.appendChild(b2);

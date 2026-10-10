@@ -126,7 +126,7 @@ function konamiFx() {
   if (calm()) return;
   const f = document.createElement('div'); f.className = 'kfx';
   f.innerHTML = Array.from({length: 28}, (_, i) => { const a = i / 28 * 6.283 + Math.random() * .3, d = 150 + Math.random() * 280;
-    return `<i style=\"--dx:${Math.cos(a) * d | 0}px;--dy:${Math.sin(a) * d | 0}px;--s:${(.7 + Math.random() * 1.3).toFixed(2)};--r:${Math.random() * 360 | 0}deg;animation-delay:${(Math.random() * .15).toFixed(2)}s\">${['✦', '✧', '✦', '·'][i % 4]}</i>`; }).join('') + '<b>old school ✦</b>';
+    return `<i style=\"--dx:${Math.cos(a) * d | 0}px;--dy:${Math.sin(a) * d | 0}px;--s:${(.7 + Math.random() * 1.3).toFixed(2)};--r:${Math.random() * 360 | 0}deg;animation-delay:${(Math.random() * .15).toFixed(2)}s\"></i>`; }).join('') + '<b>old school ✦</b>';
   document.body.appendChild(f); setTimeout(() => f.remove(), 2400);
 }
 /* easter egg: a foto do gato aparece junto com o troféu do código KONAMI */
@@ -240,7 +240,7 @@ document.querySelectorAll('.fx').forEach(el => {
   el.dataset.text = el.textContent;
   if (el.classList.contains('boot-title')) el.innerHTML = [...el.textContent].map((c, i) => `<span style="--i:${i}">${c}</span>`).join('');
   if (el.id === 'trackTitle') return; // o título da música é trocado por script; fica só com brilho
-  el.insertAdjacentHTML('beforeend', '<i class="tw a">✦</i><i class="tw b">✧</i>');
+  el.insertAdjacentHTML('beforeend', '<i class="tw a"></i><i class="tw b"></i>');
 });
 
 /* ---------- fundo: pétalas caindo e brilhos suaves (por cima da foto) ---------- */
@@ -550,13 +550,14 @@ document.querySelector('.eq').innerHTML = Array.from({length: 18}, () => `<i sty
 /* ---------- rastro de brilhos no mouse + explosão de brilhos e onda de vidro no clique ---------- */
 (function () {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const BF = new Image(); BF.src = 'assets/angel-star.svg?v=13';
   const cv = $('#trail'), cx = cv.getContext('2d'), G = ['✦', '✧', '·', '˚'], C = ['#fff', '#fff', '#e7e7e7', '#cccccc', '#f5f5f5'];
   let P = [], run = false, lx = 0, ly = 0, d = 1;
   const size = () => { d = Math.min(devicePixelRatio || 1, 1.5); cv.width = innerWidth * d; cv.height = innerHeight * d; };
   size(); addEventListener('resize', size);
   function step() {
     cx.clearRect(0, 0, cv.width, cv.height); P = P.filter(p => p.l > 0);
-    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .04 * d; p.l -= .035; cx.globalAlpha = Math.max(0, p.l); cx.fillStyle = p.c; cx.shadowColor = '#a6a6a6'; cx.shadowBlur = 8 * d; cx.font = p.s + 'px sans-serif'; cx.fillText(p.g, p.x, p.y); });
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .04 * d; p.l -= .035; cx.globalAlpha = Math.max(0, p.l); cx.fillStyle = p.c; cx.shadowColor = '#ff3b55'; cx.shadowBlur = 8 * d; if (BF.complete && BF.naturalWidth) cx.drawImage(BF, p.x - p.s / 2, p.y - p.s / 2, p.s * 1.3, p.s * 1.3); });
     if (P.length) requestAnimationFrame(step); else run = false;
   }
   const add = (x, y, n) => {
@@ -615,10 +616,11 @@ const TROPHIES = [
   {id: 'about', name: 'read the file', desc: 'open about'},
   {id: 'music', name: 'on repeat', desc: 'open music'},
   {id: 'sing', name: 'moonlight', desc: 'listen to clair de lune for a while'},
-  {id: 'wish', name: 'make a wish', desc: 'catch a shooting star'},
+  {id: 'wish', name: 'make a wish', desc: 'catch a shooting butterfly'},
   {id: 'konami', name: 'old school', desc: '↑ ↑ ↓ ↓ ◀ ▶ ◀ ▶ ○ ×', hint: 'a classic cheat code', secret: true},
   {id: 'plat', name: 'angel.exe', desc: 'get them all', plat: true}
 ];
+const BFI = '<img class="bfi" src="assets/angel-star.svg?v=13" alt="">';
 const TKEY = 'tutu.trophies.v1', trGrid = $('#trGrid'), trCount = $('#trCount');
 let got = {};
 try { got = JSON.parse(localStorage.getItem(TKEY) || '{}') || {}; } catch (e) {}
@@ -626,7 +628,7 @@ const saveTrophies = () => { try { localStorage.setItem(TKEY, JSON.stringify(got
 function drawTrophies() {
   trGrid.innerHTML = TROPHIES.map(t => {
     const on = !!got[t.id];
-    return `<div class="tr ${on ? 'got' : 'locked'}${t.plat ? ' plat' : ''}"><span class="ic">${on ? (t.plat ? '✪' : '✦') : '?'}</span>` +
+    return `<div class="tr ${on ? 'got' : 'locked'}${t.plat ? ' plat' : ''}"><span class="ic">${on ? BFI : '?'}</span>` +
       `<div><strong>${on || !(t.plat || t.secret) ? t.name : '???'}</strong><small>${on || !t.secret ? t.desc : t.hint}</small></div></div>`;
   }).join('');
   trCount.textContent = Object.keys(got).length + '/' + TROPHIES.length;
@@ -653,7 +655,7 @@ function toast(t) { toastQ.push(t); if (!toasting) { toasting = true; setTimeout
 function nextToast() {
   const t = toastQ.shift(); if (!t) { toasting = false; return; }
   const el = document.createElement('div'); el.className = 'toast' + (t.plat ? ' plat' : '');
-  el.innerHTML = `<span class="ic">${t.plat ? '✪' : '✦'}</span><div><small>${t.plat ? 'platinum trophy' : 'trophy earned'}</small><b>${t.name}</b><em>${t.desc}</em></div>`;
+  el.innerHTML = `<span class="ic">${BFI}</span><div><small>${t.plat ? 'platinum trophy' : 'trophy earned'}</small><b>${t.name}</b><em>${t.desc}</em></div>`;
   $('#toasts').appendChild(el); chime(t.plat);
   setTimeout(() => el.classList.add('out'), t.plat ? 4600 : 3400);
   setTimeout(() => { el.remove(); setTimeout(nextToast, 150); }, t.plat ? 5050 : 3850);
@@ -742,14 +744,7 @@ const DISCORD_ID = '';
    Cada clipe: {title, tag, src, poster}  -> vídeo seu em assets/clips/ (abre no player dentro da tela do Vita)
            ou {title, tag, url, thumb}    -> link externo (Medal, YouTube...) que abre em outra aba
    Enquanto a lista estiver vazia, a aba CLIPS fica escondida. */
-const CLIPS = [
-  {title: 'clipe 1', tag: 'clip', src: 'assets/clips/clipe_1.mp4', poster: 'assets/clips/clipe_1.jpg', dur: 22.6},
-  {title: 'clipe 2', tag: 'clip', src: 'assets/clips/clipe_2.mp4', poster: 'assets/clips/clipe_2.jpg', dur: 13.8},
-  {title: 'clipe 3', tag: 'clip', src: 'assets/clips/clipe_3.mp4', poster: 'assets/clips/clipe_3.jpg', dur: 30.2},
-  {title: 'clipe 4', tag: 'clip', src: 'assets/clips/clipe_4.mp4', poster: 'assets/clips/clipe_4.jpg', dur: 5},
-  // outro exemplo (link externo, ex.: Medal): {title: 'clutch 1v3', tag: 'medal', url: 'https://medal.tv/clips/xxxxx', thumb: 'https://...'},
-  // "dur" (em segundos) é opcional: só enfeita o cartão e a barra antes do vídeo carregar.
-];
+const CLIPS = []; // aba CLIPS removida
 (function clips() {
   const tab = $('#clipsTab'), panel = $('#clips');
   if (!CLIPS.length) { tab.remove(); panel.remove(); const i = items.indexOf(tab); if (i > -1) items.splice(i, 1); const p = panels.indexOf(panel); if (p > -1) panels.splice(p, 1); return; }
