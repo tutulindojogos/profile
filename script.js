@@ -119,7 +119,7 @@ const actions = {
 const SEQ = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'cir', 'x']; let ki = 0;
 function konamiFeed(k) {
   ki = k === SEQ[ki] ? ki + 1 : (k === SEQ[0] ? 1 : 0);
-  if (ki === SEQ.length) { ki = 0; unlock('konami'); konamiFx(); return true; }
+  if (ki === SEQ.length) { ki = 0; unlock('konami'); konamiFx(); showCat(); return true; }
   return ki === SEQ.length - 1 && k === 'cir';
 }
 function konamiFx() {
@@ -129,11 +129,21 @@ function konamiFx() {
     return `<i style=\"--dx:${Math.cos(a) * d | 0}px;--dy:${Math.sin(a) * d | 0}px;--s:${(.7 + Math.random() * 1.3).toFixed(2)};--r:${Math.random() * 360 | 0}deg;animation-delay:${(Math.random() * .15).toFixed(2)}s\">${['✦', '✧', '✦', '·'][i % 4]}</i>`; }).join('') + '<b>old school ✦</b>';
   document.body.appendChild(f); setTimeout(() => f.remove(), 2400);
 }
-function press(k) { legendFlash(k); if (konamiFeed(k)) return; actions[k]?.(); }
+/* easter egg: a foto do gato aparece junto com o troféu do código KONAMI */
+let catEl = null, catT = 0;
+function hideCat() { if (!catEl) return; const e = catEl; catEl = null; clearTimeout(catT); e.classList.add('out'); setTimeout(() => e.remove(), 420); }
+function showCat() {
+  hideCat(); const e = document.createElement('div'); e.className = 'categg'; e.setAttribute('role', 'dialog'); e.setAttribute('aria-label', 'easter egg');
+  e.innerHTML = '<figure><i class="tape"></i><img src="assets/gato.jpg" alt="gatinho dormindo"><figcaption>shhh... ele está dormindo ♡</figcaption></figure><small>toque para fechar</small>';
+  e.addEventListener('click', hideCat); document.body.appendChild(e); catEl = e; catT = setTimeout(hideCat, 12000);
+}
+addEventListener('keydown', ev => { if (catEl && ev.key === 'Escape') hideCat(); });
+function press(k) { legendFlash(k); if (catEl) { hideCat(); return; } if (konamiFeed(k)) return; actions[k]?.(); }
 const keymap = {ArrowLeft:'left', ArrowRight:'right', ArrowUp:'up', ArrowDown:'down', Enter:'x', ' ':'x', Escape:'cir', m:'tri', M:'tri', h:'select', H:'select'};
 const secretKeys = {b: 'cir', B: 'cir', a: 'x', A: 'x'}; // no teclado: ↑↑↓↓←→←→ B A
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (catEl && !e.repeat && !['Shift', 'Tab'].includes(e.key)) { hideCat(); e.preventDefault(); return; }
   if (e.key === '+' || e.key === '=') return setVol(5);
   if (e.key === '-') return setVol(-5);
   const k = keymap[e.key];
@@ -150,7 +160,7 @@ document.addEventListener('keydown', e => {
 /* ---------- música de fundo ----------
    Usa assets/music.mp3 se existir. Se não existir, toca um ambiente suave gerado no navegador. */
 // Se você usar assets/music.mp3, edite aqui o nome da sua música:
-const TRACK = {title: "Why'd You Only Call Me When You're High?", artist: 'Arctic Monkeys', url: 'https://open.spotify.com/search/Arctic%20Monkeys%20Why%27d%20You%20Only%20Call%20Me%20When%20You%27re%20High'};
+const TRACK = {title: 'Clair de Lune', artist: 'Claude Debussy', url: 'https://open.spotify.com/search/Clair%20de%20Lune%20Debussy'};
 let fileOk = true, playing = false, synth = null;
 function showTrack(file) {
   $('#trackArtist').textContent = file ? TRACK.artist.toUpperCase() : 'AMBIENTE';
@@ -242,17 +252,22 @@ document.querySelectorAll('.fx').forEach(el => {
   function size() {
     d = 1; w = cv.width = innerWidth * d; h = cv.height = innerHeight * d;
     P = Array.from({length: Math.round(w * h / 90000)}, () => mk(true));
-    S = Array.from({length: Math.round(w * h / 60000)}, () => ({x: Math.random() * w, y: Math.random() * h, r: (Math.random() * 3 + 1.5) * d, s: Math.random() * 6.3}));
+    S = Array.from({length: Math.round(w * h / 60000)}, () => ({x: Math.random() * w, y: Math.random() * h, r: (Math.random() * 3 + 1.8) * d, s: Math.random() * 6.3, c: ['#d4162f', '#a30f27', '#ff3a52', '#7d0a1c'][Math.random() * 4 | 0]}));
   }
   function frame(t) {
     if (document.body.classList.contains('moving') || document.hidden || t - (frame.last || 0) < 32) return requestAnimationFrame(frame); // pausa enquanto gira; ~30fps
-    frame.last = t; cx.clearRect(0, 0, w, h); cx.fillStyle = '#fff';
-    S.forEach(s => { const r = s.r * 2.2; cx.globalAlpha = .15 + .6 * Math.abs(Math.sin(t / 1100 + s.s)); cx.beginPath(); cx.moveTo(s.x, s.y - r); cx.quadraticCurveTo(s.x, s.y, s.x + r, s.y); cx.quadraticCurveTo(s.x, s.y, s.x, s.y + r); cx.quadraticCurveTo(s.x, s.y, s.x - r, s.y); cx.quadraticCurveTo(s.x, s.y, s.x, s.y - r); cx.fill(); });
+    frame.last = t; cx.clearRect(0, 0, w, h);
+    S.forEach(s => { // borboletas vermelhas piscando (asas batendo)
+      const f = .35 + .65 * Math.abs(Math.sin(t / 420 + s.s)), r = s.r * 2.6;
+      cx.globalAlpha = .25 + .55 * Math.abs(Math.sin(t / 1300 + s.s)); cx.save(); cx.translate(s.x, s.y); cx.rotate(Math.sin(t / 2600 + s.s) * .5); cx.fillStyle = s.c;
+      for (const k of [-1, 1]) { cx.save(); cx.scale(k * f, 1); cx.beginPath(); cx.moveTo(0, 0); cx.bezierCurveTo(r * .2, -r * 1.1, r * 1.5, -r * 1.1, r * 1.1, -r * .1); cx.bezierCurveTo(r * 1.2, r * .5, r * .5, r * .9, 0, r * .15); cx.fill(); cx.restore(); }
+      cx.fillStyle = '#12010a'; cx.fillRect(-.6 * d, -r * .35, 1.2 * d, r * .8); cx.restore();
+    });
     P.forEach((p, i) => {
       p.y += p.vy; p.a += p.va; p.x += Math.sin(t / 1500 + p.sw) * .5 * d;
       if (p.y > h + 20) P[i] = mk(false);
       cx.save(); cx.translate(p.x, p.y); cx.rotate(p.a); cx.scale(1, .55 + .45 * Math.abs(Math.sin(t / 900 + p.sw)));
-      cx.globalAlpha = p.o; cx.fillStyle = ['#ffffff', '#f4f7ff', '#ebebeb', '#fafafa'][i % 4]; cx.beginPath(); cx.ellipse(0, 0, p.r, p.r * .55, 0, 0, 6.283); cx.fill(); cx.restore();
+      cx.globalAlpha = p.o; cx.fillStyle = ['#8a0f25', '#b3122b', '#5e0a18', '#c9283f'][i % 4]; cx.beginPath(); cx.ellipse(0, 0, p.r, p.r * .55, 0, 0, 6.283); cx.fill(); cx.restore();
     });
     if (!still) requestAnimationFrame(frame);
   }
@@ -279,20 +294,20 @@ let obj = null, dirty = true, ry = 0, rx = 0;
 let envTex = null;
 (function () {
   const s = new T.Scene();
-  s.add(new T.Mesh(new T.SphereGeometry(5, 32, 16), new T.MeshBasicMaterial({color: 0x15161b, side: T.BackSide})));
+  s.add(new T.Mesh(new T.SphereGeometry(5, 32, 16), new T.MeshBasicMaterial({color: 0x14060b, side: T.BackSide})));
   const box = (c, i, x, y, z, w, h) => {
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({color: new T.Color(c).multiplyScalar(i), side: T.DoubleSide}));
     m.position.set(x, y, z); m.lookAt(0, 0, 0); s.add(m);
   };
-  box(0xfff1e4, 6, -3, 3, 3, 3, 2); box(0xcfe0ff, 3, 3.5, 1, 2, 2, 3); box(0xffffff, 4, 0, 4, -2, 5, 1.5); box(0xe8f0ff, 2, 0, -3, 3, 4, 1);
+  box(0xfff1e4, 6, -3, 3, 3, 3, 2); box(0xff9aa8, 3, 3.5, 1, 2, 2, 3); box(0xffffff, 4, 0, 4, -2, 5, 1.5); box(0xffc0c8, 2, 0, -3, 3, 4, 1);
   box(0xffffff, 3, 0, 3, 3.5, 4, 1.4);          // faixa suave na frente (brilho no vidro/cromo)
-  box(0xd7e6ff, 4, -3.2, .5, -3, .9, 3.5);      // contraluz azul-gelo
-  box(0xf1e6ff, 4, 3.2, .5, -3, .9, 3.5);       // contraluz lilás-pérola
+  box(0xff3a58, 4, -3.2, .5, -3, .9, 3.5);      // contraluz azul-gelo
+  box(0xc01838, 4, 3.2, .5, -3, .9, 3.5);       // contraluz lilás-pérola
   const pm = new T.PMREMGenerator(renderer); envTex = pm.fromScene(s, .02).texture; scene.environment = envTex; pm.dispose();
 })();
 const key = new T.DirectionalLight(0xfff0e0, TUNE.key); key.position.set(-.3, .4, .5); scene.add(key);
-const rim = new T.DirectionalLight(0xbcd4ff, TUNE.rim); rim.position.set(.5, .2, -.5); scene.add(rim);
-const rim2 = new T.DirectionalLight(0xe6dcff, TUNE.rim2); rim2.position.set(-.6, -.2, -.4); scene.add(rim2);
+const rim = new T.DirectionalLight(0xff4a66, TUNE.rim); rim.position.set(.5, .2, -.5); scene.add(rim);
+const rim2 = new T.DirectionalLight(0xc8203f, TUNE.rim2); rim2.position.set(-.6, -.2, -.4); scene.add(rim2);
 scene.add(new T.AmbientLight(0xffffff, .12));
 // holofote: luz de cima que ilumina o Vita (o feixe visível é o .spot no CSS)
 const spotL = new T.SpotLight(0xfff3e6, TUNE.spot, 0, .5, .75, 1); spotL.position.set(0, .5, .3); spotL.target.position.set(0, 0, 0); scene.add(spotL, spotL.target);
@@ -599,7 +614,7 @@ const TROPHIES = [
   {id: 'copy', name: 'copy that', desc: 'copy my discord'},
   {id: 'about', name: 'read the file', desc: 'open about'},
   {id: 'music', name: 'on repeat', desc: 'open music'},
-  {id: 'sing', name: 'sing along', desc: 'listen with the lyrics on'},
+  {id: 'sing', name: 'moonlight', desc: 'listen to clair de lune for a while'},
   {id: 'wish', name: 'make a wish', desc: 'catch a shooting star'},
   {id: 'konami', name: 'old school', desc: '↑ ↑ ↓ ↓ ◀ ▶ ◀ ▶ ○ ×', hint: 'a classic cheat code', secret: true},
   {id: 'plat', name: 'angel.exe', desc: 'get them all', plat: true}

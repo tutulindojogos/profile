@@ -12,32 +12,10 @@
    └────────────────────────────────────────────────────────────────────────────────────┘
    As linhas que vêm aqui são só um exemplo (texto original, não é a letra da música). */
 
-const LRC = `
-[00:06.00]
-[00:08.00] signal low, halo high
-[00:15.00] tuning into a softer sky
-[00:22.00] chrome heart, pearl static
-[00:29.00] everything glitters when it's late
-[00:36.00] i left my wings on airplane mode
-[00:44.00] stay online, stay angel
-[00:52.00] glass rain on the screen
-[01:00.00] nobody sees me buffering
-[01:08.00] still loading, still bright
-[01:16.00] burn me a cd of this feeling
-[01:24.00] 2000s ghost in a white room
-[01:32.00] press start on the sky
-[01:40.00] low battery, high hopes
-[01:48.00] we were never offline
-[01:56.00] pixel prayers, silver stars
-[02:04.00] fall slow, shine louder
-[02:12.00] angel.exe is still running
-[02:20.00] save point: here
-[02:28.00] see you in the static
-[02:36.00] ✦
-`;
+const LRC = ``; // Clair de Lune não tem letra: a janela de lyrics foi desligada
 
 // batidas por minuto da música (só é usado quando o navegador não deixa "ouvir" o áudio, tipo abrindo o arquivo direto no PC)
-const BPM = 92;
+const BPM = 58;
 
 // Se a letra estiver sempre adiantada (+) ou atrasada (−), acerte aqui em segundos. Ao vivo: teclas [ e ] mudam 0,25s.
 const OFFSET = 0;
@@ -64,10 +42,7 @@ const OFFSET = 0;
   const L = parseLRC(LRC);
   let fromFile = false;
   // se existir assets/lyrics.lrc, ele vale no lugar do texto de exemplo (só funciona com o site publicado, não abrindo o arquivo direto)
-  fetch('assets/lyrics.lrc?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').then(txt => {
-    const a = parseLRC(txt); if (!a.length) return;
-    L.length = 0; a.forEach(x => L.push(x)); fromFile = true; idx = -2; lit = -1;
-  }).catch(() => {});
+  // (letras desligadas)
 
   /* preferências salvas (janela aberta/fechada, posição) */
   let pref = {open: true, min: false, x: null, y: null, off: 0};
@@ -79,7 +54,7 @@ const OFFSET = 0;
   const halo = $('.halo');
 
   let ghost = null, win = null, tab = null, pill = null, pillText = null, plit = -1;
-  if (!MOBILE) {
+  if (false) {
     ghost = mk('div', 'ly-ghost'); ghost.setAttribute('aria-hidden', 'true');
     // v10: as letras gigantes de fundo foram removidas (o ghost fica fora da página, só pra não quebrar o resto do código)
 
@@ -104,13 +79,13 @@ const OFFSET = 0;
     document.body.appendChild(tab);
   }
   /* v10.1 — celular: letra pequena em cima do botão de volume (conta pro troféu "sing along") */
-  if (MOBILE) {
+  if (false) {
     pill = mk('div', 'ly-pill', '<button class="lp-btn" type="button" aria-label="Mostrar ou esconder letras">♪</button><div class="lp-text" aria-hidden="true"></div>');
     document.body.appendChild(pill); pillText = pill.querySelector('.lp-text');
     pill.querySelector('.lp-btn').addEventListener('click', () => { pref.open = !pref.open; save(); updateVisibility(); });
   }
   const mini = mk('div', 'ly-mini'); mini.id = 'lyMini'; mini.setAttribute('aria-hidden', 'true');
-  const note = $('#music .music-note'); if (note) note.before(mini);
+  
 
   const rowPrev = win && $('#lyPrev'), rowCur = win && $('#lyCur'), rowNext = win && $('#lyNext');
   const prog = win && $('#lywProg'), timeEl = win && $('#lywTime');
@@ -215,7 +190,7 @@ const OFFSET = 0;
     paintBeat(readBeat(t, playing));
 
     let i = idx;
-    if (i < -1 || (i >= 0 && t < L[i].t) || (i + 1 < L.length && t >= L[i + 1].t) || (i === -1 && L[0].t <= t)) {
+    if (i < -1 || (i >= 0 && t < L[i].t) || (i + 1 < L.length && t >= L[i + 1].t) || (i === -1 && L.length && L[0].t <= t)) {
       i = -1; for (let k = 0; k < L.length; k++) { if (L[k].t <= t) i = k; else break; }
     }
     if (i !== idx) lineChanged(i);
@@ -232,7 +207,7 @@ const OFFSET = 0;
         }
       }
     }
-    if (win) {
+    if (win && ghost) {
       win.classList.toggle('paused', !playing);
       ghost.classList.toggle('paused', !playing);
       if (win.classList.contains('show') && !win.classList.contains('min')) {
@@ -261,8 +236,10 @@ const OFFSET = 0;
     }
   }
 
+  let heard = 0;
   function start() {
     if (started) return; started = true;
+    setInterval(() => { if (!bgm.paused && ++heard >= 40) unlockSafe('sing'); }, 1000);
     updateVisibility();
     if (!raf) frame();
     document.addEventListener('visibilitychange', () => {

@@ -1,3 +1,1 @@
-bg.jpg: foto de fundo
-music.mp3: sua musica (opcional)
-vita/: modelo 3D e texturas
+Música: assets/music.mp3 (Clair de Lune - Debussy). Wallpaper: assets/bg.jpg. Easter egg do gato: assets/gato.jpg.

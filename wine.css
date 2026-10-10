@@ -1,0 +1,125 @@
+/* ===== wine ✦ butterfly edition — vermelho vinho + preto =====
+   Este arquivo vem por último e só sobrescreve cores. Pra voltar ao tema antigo: tire a linha do wine.css no index.html.
+   Cores principais (troque aqui se quiser ajustar): */
+:root{
+  --w0:#0a0206;--w1:#16040b;--w2:#26060f;--w3:#43091a;--w4:#6e0f27;
+  --red:#c4162f;--red2:#ff3b55;--rose:#f4dfe3;--rose2:#d9a9b2;
+  --ink:#f4dfe3;--ink2:#f4dfe3;--silver:#d9a9b2;--silver2:#b57a86;--silver3:#f4dfe3;--pink:#43091a;--pink2:#26060f;
+  --line:rgba(196,22,47,.45);--glass:rgba(38,6,15,.8);--shadow:rgba(0,0,0,.6);
+}
+html{background:#0a0206!important}
+body{background:transparent!important;color:var(--rose)}
+body:before{opacity:.18!important}
+
+/* wallpaper */
+.bg{background:#0a0206 url(assets/bg.jpg?v=1) 30% 35%/cover no-repeat!important;filter:none!important;animation:none!important;transform:none!important}
+.bg:after{background:linear-gradient(180deg,rgba(10,2,6,.2),transparent 38%,rgba(10,2,6,.6))!important;mix-blend-mode:normal!important}
+@media(max-width:760px){.bg{background-image:url(assets/bg_mobile.jpg?v=1)!important;background-position:25% 20%!important}}
+.lamp{background:radial-gradient(ellipse 50% 60% at 30% 40%,rgba(160,20,45,.28),transparent 72%)!important}
+.spot{opacity:.28!important}
+.spot:before,.beam,.pool{background:radial-gradient(ellipse,rgba(255,70,95,.55),rgba(160,20,45,.18) 45%,transparent 70%)!important}
+.mist{background:linear-gradient(transparent,rgba(60,6,20,.7))!important}
+.halo{display:none!important}
+.glam .irid{background:radial-gradient(circle at 38% 40%,rgba(190,24,52,.38),transparent 48%),radial-gradient(circle at 64% 60%,rgba(110,10,40,.34),transparent 50%),radial-gradient(circle,rgba(255,60,90,.12),transparent 66%)!important}
+.glam .streak{background:linear-gradient(90deg,transparent,rgba(196,22,47,.5) 18%,rgba(255,120,140,.9) 50%,rgba(196,22,47,.5) 82%,transparent)!important}
+.glam .cd{background:radial-gradient(circle,#0a0206 0 6%,#f4b5bf 6.4% 9%,transparent 9.4%),conic-gradient(from 20deg,#5a0b1d,#c4162f,#ffb3be,#7e0f28,#2a0610,#e04a62,#ffb3be,#4a0816,#5a0b1d)!important;box-shadow:inset 0 0 0 2px rgba(255,160,175,.6),inset 0 0 0 9px rgba(20,2,8,.3),0 0 30px rgba(196,22,47,.35)!important}
+.glam .gring svg text{fill:#ffd6dc}.glam .gring svg circle{fill:rgba(120,10,35,.25);stroke:rgba(255,120,140,.6)}
+.glam .bar,.glam .bar2{color:rgba(255,170,185,.6)!important}
+.glam .code{background:repeating-linear-gradient(0deg,#e04a62 0 2px,transparent 2px 4px,#e04a62 4px 5px,transparent 5px 8px,#e04a62 8px 11px,transparent 11px 13px)!important}
+
+/* carcaça e tela */
+.screen-glow{background:radial-gradient(circle at 50% 45%,rgba(196,22,47,.18),transparent 58%)!important}
+.boot{background:radial-gradient(circle at 50% 40%,rgba(150,16,42,.75) 0,rgba(150,16,42,0) 55%),linear-gradient(160deg,#12030a,#2b0713 55%,#4a0b1d)!important}
+.home{background:radial-gradient(circle at 12% 0,rgba(170,22,50,.55) 0,transparent 48%),radial-gradient(circle at 92% 100%,rgba(110,12,38,.65),transparent 52%),linear-gradient(160deg,#12030a 0%,#1f050e 45%,#33081a 100%)!important;color:var(--rose)!important}
+.home:before{background:radial-gradient(circle at 25% 30%,rgba(255,60,90,.22),transparent 24%),radial-gradient(circle at 75% 65%,rgba(196,22,47,.2),transparent 22%),radial-gradient(circle at 55% 15%,rgba(255,120,140,.12),transparent 18%)!important}
+.boot-title{color:#fff!important;-webkit-text-stroke:.8px rgba(196,22,47,.9)!important;text-shadow:0 0 8px rgba(255,59,85,.9),0 0 24px rgba(196,22,47,.7),0 0 56px rgba(160,20,45,.6)!important}
+.boot-sub,.boot-hint{color:var(--rose2)!important;text-shadow:0 0 10px rgba(196,22,47,.7)!important}
+.boot-mark{filter:drop-shadow(0 0 10px rgba(255,60,90,.9)) drop-shadow(0 0 26px rgba(196,22,47,.8))!important}
+.start{background:linear-gradient(180deg,#c4162f,#6e0f27)!important;color:#fff!important;border:2px solid #ff9aa8!important;box-shadow:0 0 0 2px #0a0206,0 0 22px rgba(255,59,85,.65)!important;text-shadow:none!important}
+.start:hover{background:linear-gradient(180deg,#ff3b55,#a0142f)!important}
+.lock,.lock *{color:var(--rose)!important;text-shadow:0 0 14px rgba(196,22,47,.8)!important}
+.sbar,.sbar *{color:var(--rose2)!important}
+
+/* títulos */
+.home h1,.hero-copy h2,.music-card h2,#vscreen .hero-copy h2,.fx,.ld-title{color:#fff!important;-webkit-text-stroke:.8px rgba(196,22,47,.9)!important;text-shadow:0 0 8px rgba(255,59,85,.85),0 0 22px rgba(196,22,47,.55)!important}
+.eyebrow,.tiny,.panel-title,.screen-footer,.screen-footer span,.profile-head p,.hero-copy p,.music-card p,.code-line,.code-line span,.music-note{color:var(--rose2)!important}
+.profile-head{border-bottom-color:rgba(196,22,47,.6)!important}
+
+/* cartões de vidro vinho */
+.link-card,.about-box,.music-card,.status,.hero-card .image-wrap,.menu-item,.vol-hud,.guide,.tr,.act{
+  background:linear-gradient(160deg,rgba(74,11,29,.88),rgba(24,4,11,.9) 55%,rgba(52,8,22,.88))!important;
+  border:1.5px solid rgba(214,40,66,.7)!important;color:var(--rose)!important;border-radius:14px;
+  box-shadow:0 0 0 1px #0a0206,0 0 0 3px rgba(196,22,47,.35),0 8px 20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,130,150,.28)!important}
+.link-card strong,.link-card small,.link-card span,.about-box *,.tr strong,.tr small,.guide li span,.guide h3,.vol-hud *,.status em,.act *{color:var(--rose)!important}
+.link-card small,.tr small{color:var(--rose2)!important}
+.link-card:hover,.link-card:focus,.link-card:focus-visible{background:linear-gradient(160deg,rgba(130,18,44,.95),rgba(50,8,22,.95))!important;outline-color:var(--red2)!important}
+.link-card:hover strong{text-shadow:0 0 10px rgba(255,59,85,.9)!important}
+.chip{background:var(--red)!important;color:#fff!important}
+.menu-item{color:var(--rose)!important;text-shadow:none!important}
+.menu-item.active,.menu-item.active:hover{background:linear-gradient(180deg,#e0243f,#7a0f27)!important;color:#fff!important;border-color:#ffa0ae!important;box-shadow:0 0 0 1px #0a0206,0 0 16px rgba(255,59,85,.75),0 6px 16px rgba(0,0,0,.5)!important}
+.menu-item:hover:not(.active){background:linear-gradient(180deg,#6e0f27,#2b0713)!important;color:#fff!important;border-color:#ff7a8c!important;box-shadow:0 0 14px rgba(196,22,47,.7),0 4px 12px rgba(0,0,0,.4)!important}
+.tags span{background:linear-gradient(135deg,#5a0b1d,#2b0713)!important;color:var(--rose)!important;border:1px solid rgba(255,110,130,.55)!important;box-shadow:inset 0 1px 0 rgba(255,150,165,.3),0 2px 8px rgba(0,0,0,.5)!important}
+.status span,.status i{background:var(--red2)!important;box-shadow:0 0 10px var(--red2)!important}
+.image-label{background:rgba(10,2,6,.7)!important;color:var(--rose)!important;border-color:rgba(214,40,66,.6)!important}
+.image-wrap img,.mini-avatar img,.album img{filter:saturate(1.08) contrast(1.05)!important;object-position:center 22%}
+.mini-avatar{border-color:#ff6b81!important;box-shadow:0 0 0 2px #0a0206,0 0 14px rgba(255,59,85,.7)!important}
+.eq i{background:var(--red2)!important;box-shadow:0 0 8px rgba(255,59,85,.8)!important}
+.play-ring{background:radial-gradient(circle at 35% 28%,#ff6b81,#a0142f 70%,#4a0816)!important;color:#fff!important}
+.spotify{color:var(--rose2)!important}
+.code-line b{color:#ff6b81!important}
+.tr.got .ic{background:linear-gradient(180deg,#ff5b73,#a0142f)!important;color:#fff!important}
+.tr .ic{border-color:rgba(255,110,130,.5)!important}
+.tr-reset{color:var(--rose2)!important;border-color:rgba(214,40,66,.6)!important;background:transparent!important}
+
+/* guia, volume, ticker, toasts, loader */
+.guide li b.g{background:linear-gradient(180deg,#6e0f27,#26060f)!important;color:#fff!important;border-color:rgba(255,110,130,.6)!important;box-shadow:none!important}
+#musicBtn{background:radial-gradient(circle at 35% 28%,#ff6b81,#a0142f 70%,#4a0816)!important;color:#fff!important;box-shadow:0 0 0 2px #0a0206,0 0 0 4px #ff6b81!important}
+#vol::-webkit-slider-runnable-track{background:linear-gradient(90deg,#ff3b55 var(--v),#3a0a16 var(--v))!important}
+#vol::-moz-range-progress{background:#ff3b55!important}
+.vol-tip,#volPct{background:#0a0206!important;color:#fff!important;border-color:#ff6b81!important}
+.ticker{background:#12020a!important;color:#ff6b81!important;border-block:2px solid #c4162f!important;text-shadow:0 0 8px rgba(255,59,85,.6)!important}
+.toast{background:linear-gradient(160deg,rgba(80,11,30,.96),rgba(20,3,9,.96))!important;color:var(--rose)!important;border:1.5px solid rgba(255,100,120,.7)!important;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 22px rgba(196,22,47,.45)!important}
+.toast *{color:var(--rose)!important}.toast .ic{background:linear-gradient(180deg,#ff5b73,#a0142f)!important;color:#fff!important}
+#loader{background:radial-gradient(ellipse 60% 55% at 50% 44%,rgba(150,16,42,.7),transparent 70%),linear-gradient(160deg,#0a0206,#26060f 60%,#43091a)!important}
+.ld-fill{background:linear-gradient(90deg,#4a0816,#ff3b55)!important}
+.ld-row,.ld-row *{color:var(--rose2)!important}
+.ld-bar{border-color:rgba(255,110,130,.6)!important;background:rgba(10,2,6,.6)!important}
+.ld-angel,.ld-star,.boot-mark,.lb-star,.charm img{filter:drop-shadow(0 0 8px rgba(255,59,85,.8))!important}
+.pad button,.pill{background:linear-gradient(180deg,#43091a,#16040b)!important;color:var(--rose)!important;border-color:rgba(214,40,66,.6)!important;box-shadow:0 2px 8px rgba(0,0,0,.5)!important}
+#vstatus{background:rgba(10,2,6,.85)!important;color:var(--rose)!important}
+.kfx b{color:#fff!important;text-shadow:0 0 12px #ff3b55,0 0 30px #c4162f!important}.kfx i{color:#ff6b81!important}
+.wish-head,.wish-spk{color:#ff6b81!important;text-shadow:0 0 10px #ff3b55!important}
+.wish-msg{color:#fff!important;text-shadow:0 0 10px #ff3b55!important}
+.wish-tail{background:linear-gradient(90deg,transparent,rgba(255,59,85,.9))!important}
+::selection{background:#c4162f;color:#fff}
+
+/* polaroids do moodboard */
+.pol{background:#f6e6e9!important;box-shadow:0 14px 30px rgba(0,0,0,.6),0 0 0 1px rgba(196,22,47,.35)!important}
+.pol .ph{filter:saturate(1.05) contrast(1.05)!important;background-repeat:no-repeat!important}
+.pol.p1 .ph{background:url(assets/makima.jpg?v=1) 62% 18%/cover!important}
+.pol.p2 .ph{background:url(assets/bg.jpg?v=1) 28% 34%/290% auto!important}
+.pol.p3 .ph{background:url(assets/makima.jpg?v=1) 40% 85%/cover!important}
+.pol figcaption{color:#5a0b1d!important}
+.stk{background:linear-gradient(135deg,#c4162f,#6e0f27)!important;color:#fff!important;border-color:#ffb3be!important}
+
+/* ===== easter egg do código KONAMI: o gato ===== */
+.categg{position:fixed;inset:0;z-index:200;display:grid;place-items:center;align-content:center;gap:14px;background:radial-gradient(ellipse at 50% 45%,rgba(120,12,38,.72),rgba(8,1,5,.93));-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;animation:catIn .55s cubic-bezier(.2,.8,.2,1) both}
+.categg.out{animation:catOut .4s ease forwards}
+.categg figure{position:relative;margin:0;padding:14px 14px 12px;background:#f6e6e9;border-radius:6px;transform:rotate(-2.5deg);box-shadow:0 24px 70px rgba(0,0,0,.8),0 0 60px rgba(196,22,47,.55);max-width:min(88vw,680px)}
+.categg img{display:block;width:100%;max-height:68vh;object-fit:cover;border-radius:3px}
+.categg figcaption{margin-top:10px;text-align:center;font:italic 700 clamp(15px,2.4vw,22px) "Cormorant Garamond",serif;color:#5a0b1d}
+.categg .tape{position:absolute;left:50%;top:-14px;width:96px;height:26px;margin-left:-48px;transform:rotate(4deg);background:rgba(196,22,47,.55);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.categg small{font:500 10px "DM Mono",monospace;letter-spacing:.28em;text-transform:uppercase;color:var(--rose2)}
+@keyframes catIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes catOut{to{opacity:0;transform:scale(.96)}}
+
+/* aba SOCIAL em duas colunas (5 cartões cabem na tela do Vita) */
+body:not(.mobile) #social.active-panel{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start}
+body:not(.mobile) #social .panel-title{grid-column:1/-1}
+body:not(.mobile) #social .link-card:last-child{grid-column:1/-1}
+body:not(.mobile) #social .link-card{margin:5px 0}
+.play-ring{background:rgba(10,2,6,.3)!important;color:#fff!important;text-shadow:0 0 10px #ff3b55,0 2px 8px #000!important}
+.tr.locked{opacity:.78!important}
+.tr.locked .ic{background:rgba(255,255,255,.07)!important;color:var(--rose2)!important;opacity:1!important}
+.toasts{z-index:300!important}
+body.mobile .pad,.pad{background:linear-gradient(180deg,#1a050c,#0a0206)!important}
