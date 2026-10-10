@@ -29,8 +29,9 @@
   }
   const add = (cls, node) => { const w = document.createElement('div'); w.className = 'gs ' + cls; w.appendChild(node); root.appendChild(w); };
   const sz = mobile ? .6 : 1; // menos pixels no celular
-  if (!mobile) { add('g0', halftone(800, 10, .13, true)); add('g3', halftone(160, 7, .17, false)); add('g4', halftone(160, 7, .17, false)); }
-  add('g1', halftone(Math.round(800 * sz), Math.round(9 * sz), .15, true)); add('g2', halftone(Math.round(900 * sz), Math.round(10 * sz), .14, true));
+  // (removido a pedido: as borboletas gigantes de meio-tom/pontilhado por cima do wallpaper. Pra voltar com elas, descomente as linhas abaixo)
+  // if (!mobile) { add('g0', halftone(800, 10, .13, true)); add('g3', halftone(160, 7, .17, false)); add('g4', halftone(160, 7, .17, false)); }
+  // add('g1', halftone(Math.round(800 * sz), Math.round(9 * sz), .15, true)); add('g2', halftone(Math.round(900 * sz), Math.round(10 * sz), .14, true));
   if (mobile) return;
   for (const c of ['irid', 'streak']) { const i = document.createElement('i'); i.className = c; root.insertBefore(i, root.firstChild); }
 

@@ -134,7 +134,7 @@ let catEl = null, catT = 0;
 function hideCat() { if (!catEl) return; const e = catEl; catEl = null; clearTimeout(catT); e.classList.add('out'); setTimeout(() => e.remove(), 420); }
 function showCat() {
   hideCat(); const e = document.createElement('div'); e.className = 'categg'; e.setAttribute('role', 'dialog'); e.setAttribute('aria-label', 'easter egg');
-  e.innerHTML = '<figure><i class="tape"></i><img src="assets/gato.jpg" alt="gatinho dormindo"><figcaption>shhh... ele está dormindo ♡</figcaption></figure><small>toque para fechar</small>';
+  e.innerHTML = '<figure><i class="tape"></i><img src="assets/gato.jpg" alt="gatinha dormindo"><figcaption>shh... ela está dormindo ♡</figcaption></figure><small>toque para fechar</small>';
   e.addEventListener('click', hideCat); document.body.appendChild(e); catEl = e; catT = setTimeout(hideCat, 12000);
 }
 addEventListener('keydown', ev => { if (catEl && ev.key === 'Escape') hideCat(); });
